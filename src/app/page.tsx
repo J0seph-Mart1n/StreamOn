@@ -1,5 +1,6 @@
 import TopAppBar from "./components/TopAppBar";
 import SideNavBar from "./components/SideNavBar";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -41,7 +42,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-[minmax(300px,auto)]">
             
             {/* Featured Stream */}
-            <div className="md:col-span-2 xl:col-span-2 group relative rounded-xl overflow-hidden bg-surface-container border border-white/10 hover:border-primary/50 transition-all duration-300 shadow-lg hover:shadow-primary/10">
+            <Link href="/live" className="md:col-span-2 xl:col-span-2 group relative rounded-xl overflow-hidden bg-surface-container border border-white/10 hover:border-primary/50 transition-all duration-300 shadow-lg hover:shadow-primary/10 block cursor-pointer">
               <div className="aspect-video relative overflow-hidden bg-surface-container-lowest">
                 <img
                   alt="Featured Stream Thumbnail"
@@ -89,7 +90,7 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
 
             {/* Standard Stream Card 1 */}
             <div className="group relative rounded-xl overflow-hidden bg-surface-container border border-white/10 hover:border-primary/50 transition-all duration-300 shadow-lg hover:shadow-primary/10 flex flex-col">

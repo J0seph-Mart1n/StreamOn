@@ -15,7 +15,7 @@ export default function SideNavBar() {
           <span className="material-symbols-outlined text-lg">heart_check</span>
           <span className="font-medium">Following</span>
         </Link>
-        <Link href="#" className="flex items-center gap-3 px-3 py-2 rounded-lg bg-violet-500/10 text-violet-400 border-l-4 border-violet-500 transition-colors cursor-pointer">
+        <Link href="/" className="flex items-center gap-3 px-3 py-2 rounded-lg bg-violet-500/10 text-violet-400 border-l-4 border-violet-500 transition-colors cursor-pointer">
           <span className="material-symbols-outlined icon-fill text-lg">explore</span>
           <span className="font-medium">Browse</span>
         </Link>

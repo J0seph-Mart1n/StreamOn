@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function SideNavBar() {
   return (
-    <aside className="bg-zinc-900/50 backdrop-blur-md text-sm font-spline-sans border-r border-white/10 fixed left-0 top-16 bottom-0 w-[260px] flex-col pt-4 overflow-y-auto hidden md:flex z-40">
+    <aside className="bg-zinc-900/50 backdrop-blur-md text-sm border-r border-white/10 fixed left-0 top-16 bottom-0 w-[260px] flex-col pt-4 overflow-y-auto hidden md:flex z-40">
       <div className="px-4 mb-4">
         <h2 className="text-zinc-400 font-bold uppercase tracking-wider text-xs mb-1">
           Followed Channels

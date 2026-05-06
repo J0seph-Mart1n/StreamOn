@@ -1,6 +1,39 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { FIREBASE_AUTH } from "../../../FirebaseConfig";
 
 export default function AuthPage() {
+  const [isLoginMode, setIsLoginMode] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      if (isLoginMode) {
+        await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
+      } else {
+        await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password);
+      }
+      // Assuming successful auth redirects to home
+      router.push("/");
+    } catch (err: any) {
+      setError("Authentication Failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="bg-background text-on-surface font-body-md antialiased selection:bg-primary/30 selection:text-primary-fixed min-h-screen flex items-center justify-center relative overflow-hidden">
       
@@ -28,18 +61,31 @@ export default function AuthPage() {
           {/* Mode Toggle (Segmented Control) */}
           <div className="flex p-1 bg-surface-container-highest/50 rounded-lg border border-white/5">
             <button
-              aria-current="page"
-              className="flex-1 py-2 rounded-DEFAULT bg-primary/15 text-primary font-label-md text-label-md shadow-sm transition-all"
+              type="button"
+              onClick={() => { setIsLoginMode(true); setError(""); }}
+              className={`flex-1 py-2 rounded-DEFAULT font-label-md text-label-md transition-all ${
+                isLoginMode
+                  ? "bg-primary/15 text-primary shadow-sm"
+                  : "text-on-surface-variant hover:text-on-surface"
+              }`}
             >
               Log In
             </button>
-            <button className="flex-1 py-2 rounded-DEFAULT text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors">
+            <button
+              type="button"
+              onClick={() => { setIsLoginMode(false); setError(""); }}
+              className={`flex-1 py-2 rounded-DEFAULT font-label-md text-label-md transition-all ${
+                !isLoginMode
+                  ? "bg-primary/15 text-primary shadow-sm"
+                  : "text-on-surface-variant hover:text-on-surface"
+              }`}
+            >
               Sign Up
             </button>
           </div>
 
           {/* Form */}
-          <form className="flex flex-col gap-5">
+          <form onSubmit={handleAuth} className="flex flex-col gap-5">
             
             {/* Email Field */}
             <div className="flex flex-col gap-2">
@@ -61,6 +107,8 @@ export default function AuthPage() {
                   type="email"
                   placeholder="runner@nexus.net"
                   required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-12 pr-4 py-3 bg-surface-container-lowest/80 border border-outline-variant/50 rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-on-surface-variant/40"
                 />
               </div>
@@ -94,17 +142,31 @@ export default function AuthPage() {
                   type="password"
                   placeholder="••••••••"
                   required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-full pl-12 pr-4 py-3 bg-surface-container-lowest/80 border border-outline-variant/50 rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-on-surface-variant/40"
                 />
               </div>
             </div>
 
+            {/* Error Message */}
+            {error && (
+              <div className="text-error font-label-sm text-center bg-error/10 py-2 rounded border border-error/20">
+                {error}
+              </div>
+            )}
+
             {/* Primary Submit Action */}
             <button
               type="submit"
-              className="mt-2 w-full py-4 rounded-lg bg-gradient-to-r from-primary to-secondary text-on-primary font-label-md text-label-md shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+              disabled={loading}
+              className="mt-2 w-full py-4 rounded-lg bg-gradient-to-r from-primary to-secondary text-on-primary font-label-md text-label-md shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
             >
-              Log In
+              {loading ? (
+                <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+              ) : (
+                isLoginMode ? "Log In" : "Sign Up"
+              )}
             </button>
           </form>
 

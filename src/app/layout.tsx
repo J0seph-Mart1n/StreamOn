@@ -29,7 +29,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="bg-background text-on-background font-body-md min-h-screen selection:bg-primary-container selection:text-on-primary-container">
+      <body className="bg-background text-on-background font-body-md text-body-md antialiased min-h-screen selection:bg-primary-container selection:text-on-primary-container">
         {children}
       </body>
     </html>

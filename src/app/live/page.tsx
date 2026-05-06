@@ -5,7 +5,7 @@ import SideNavBar from "../components/SideNavBar";
 export default function StreamPage() {
   return (
     // Wraps the entire page in a fixed h-screen container to prevent global scrolling
-    <div className="bg-background text-on-background h-screen overflow-hidden flex flex-col font-body-md text-body-md antialiased selection:bg-primary-container selection:text-on-primary-container">
+    <div className="bg-background text-on-background h-screen overflow-hidden flex flex-col selection:bg-primary-container selection:text-on-primary-container">
       
       {/* TopAppBar */}
       <TopAppBar />

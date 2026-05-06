@@ -1,17 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { FIREBASE_AUTH } from "../../../FirebaseConfig";
 
 export default function TopAppBar() {
   const router = useRouter();
-  // Mock authentication state (defaults to false to show the signup button)
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (user) => {
+      setIsLoggedIn(!!user);
+    });
+    
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, []);
+
   return (
-    <header className="bg-zinc-950/80 backdrop-blur-xl font-spline-sans tracking-tight border-b border-white/10 shadow-2xl shadow-violet-500/5 flex justify-between items-center px-4 h-16 w-full fixed top-0 z-50 docked full-width">
+    <header className="bg-zinc-950/80 backdrop-blur-xl tracking-tight border-b border-white/10 shadow-2xl shadow-violet-500/5 flex justify-between items-center px-4 h-16 w-full fixed top-0 z-50 docked full-width">
       <div className="flex items-center gap-6">
         <Link
           href="/"
@@ -94,10 +104,13 @@ export default function TopAppBar() {
                     <p className="font-label-sm text-on-surface-variant">Online</p>
                   </div>
                   <button 
-                    onClick={() => {
-                      setIsLoggedIn(false);
-                      setShowProfileMenu(false);
-                      router.push('/signup');
+                    onClick={async () => {
+                      try {
+                        await signOut(FIREBASE_AUTH);
+                        setShowProfileMenu(false);
+                      } catch (error) {
+                        console.error("Error signing out: ", error);
+                      }
                     }} 
                     className="px-4 py-2 text-left text-error hover:bg-error/10 transition-colors flex items-center gap-3 font-label-md"
                   >

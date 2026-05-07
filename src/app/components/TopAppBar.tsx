@@ -80,7 +80,10 @@ export default function TopAppBar() {
                 videocam
               </span>
             </button>
-            <button className="ml-2 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-on-primary font-label-md rounded-lg hover:opacity-90 transition-opacity active:scale-95 duration-150 font-bold shadow-lg shadow-primary/20">
+            <button 
+              onClick={() => router.push('/broadcast')}
+              className="ml-2 px-4 py-2 bg-gradient-to-r from-primary to-secondary text-on-primary font-label-md rounded-lg hover:opacity-90 transition-opacity active:scale-95 duration-150 font-bold shadow-lg shadow-primary/20"
+            >
               Go Live
             </button>
             

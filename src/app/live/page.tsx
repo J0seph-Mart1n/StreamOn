@@ -1,6 +1,7 @@
 import Link from "next/link";
 import TopAppBar from "../components/TopAppBar";
 import SideNavBar from "../components/SideNavBar";
+import MuxPlayer from "@mux/mux-player-react";
 
 export default function StreamPage() {
   return (
@@ -21,16 +22,21 @@ export default function StreamPage() {
           {/* Video Player & Info Section */}
           <section className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-background custom-scrollbar">
             {/* Large Video Player */}
-            <div className="w-full bg-surface-container-highest relative group aspect-video lg:aspect-auto lg:h-[665px] shrink-0 border-b border-white/5">
-              <img
-                alt="Live Stream Feed"
-                className="w-full h-full object-cover"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuAmAtaFv55POeU1Ht56g86w5RUTIr3tF6ZsZ-jXHUc1Ss06tJp31lxef8bDTZ078lI2t5NHsS5xC2C04rnjwQqoHjsqznx-lvQprytVPOxq3wjgQISwzAZ1wSF2hT15mWVly8bZXxVfpeV8HZPQ3SW4ZQbaYS-oatBfnSB1axPxrK-yf4E8r6_Uep1RhJn8HtiVpxBGDefPeO8u95CdAJe5bszH9HBrRejvLQJANM8Be4R_4YJYA8YIlRRx_6fYvFCwbcjLAH-C2UM"
+            <div className="w-full bg-black relative group aspect-video lg:aspect-auto lg:h-[665px] shrink-0 border-b border-white/5">
+              <MuxPlayer
+                playbackId="uNbxnGLKJ00yfbijDO8COxTOyVKT01xpxW" // Public test VOD. Replace with your live playbackId from the API
+                metadata={{
+                  video_title: "Neon Velocity Championship: Finals",
+                }}
+                autoPlay
+                muted
+                style={{ height: '100%', width: '100%', '--controls': 'flex' } as React.CSSProperties}
+                primaryColor="#d0bcff"
+                secondaryColor="#0b1326"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 pointer-events-none"></div>
               
-              {/* Top Left Badges */}
-              <div className="absolute top-4 left-4 flex items-center gap-2">
+              {/* Top Left Custom Badges Overlay */}
+              <div className="absolute top-4 left-4 flex items-center gap-2 pointer-events-none z-10">
                 <div className="bg-tertiary-container text-on-tertiary-container font-label-sm text-label-sm px-2 py-1 rounded shadow-lg flex items-center gap-1.5 uppercase tracking-wider backdrop-blur-md">
                   <span className="w-2 h-2 rounded-full bg-on-tertiary-container animate-pulse"></span>
                   Live
@@ -38,32 +44,6 @@ export default function StreamPage() {
                 <div className="bg-surface-container/80 backdrop-blur-md text-on-surface font-label-sm text-label-sm px-2 py-1 rounded shadow-lg flex items-center gap-1 border border-white/10">
                   <span className="material-symbols-outlined text-[16px]">visibility</span>
                   14,205
-                </div>
-              </div>
-
-              {/* Center Play Button */}
-              <button className="absolute inset-0 m-auto w-16 h-16 bg-primary/90 text-on-primary rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity transform scale-90 group-hover:scale-100 duration-200 shadow-[0_0_30px_rgba(208,188,255,0.4)] backdrop-blur-md">
-                <span className="material-symbols-outlined icon-fill text-4xl ml-1">play_arrow</span>
-              </button>
-
-              {/* Bottom Controls Bar */}
-              <div className="absolute bottom-0 left-0 right-0 p-4 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-t from-black/80 to-transparent">
-                <div className="flex items-center gap-4 text-white">
-                  <button className="hover:text-primary transition-colors">
-                    <span className="material-symbols-outlined icon-fill">pause</span>
-                  </button>
-                  <button className="hover:text-primary transition-colors">
-                    <span className="material-symbols-outlined icon-fill">volume_up</span>
-                  </button>
-                  <span className="font-label-sm text-label-sm font-medium">01:24:50 Live</span>
-                </div>
-                <div className="flex items-center gap-4 text-white">
-                  <button className="hover:text-primary transition-colors">
-                    <span className="material-symbols-outlined">settings</span>
-                  </button>
-                  <button className="hover:text-primary transition-colors">
-                    <span className="material-symbols-outlined">fullscreen</span>
-                  </button>
                 </div>
               </div>
             </div>

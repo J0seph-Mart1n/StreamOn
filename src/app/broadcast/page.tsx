@@ -6,8 +6,27 @@ import TopAppBar from "../components/TopAppBar";
 import SideNavBar from "../components/SideNavBar";
 
 export default function DashboardPage() {
-  // Simple state to toggle stream key visibility
   const [showKey, setShowKey] = useState(false);
+  const [streamData, setStreamData] = useState<{ streamKey: string, rtmpUrl: string, playbackId: string } | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const generateStreamKey = async () => {
+    setIsGenerating(true);
+    try {
+      const res = await fetch("/api/stream", { method: "POST" });
+      const data = await res.json();
+      if (res.ok) {
+        setStreamData(data);
+      } else {
+        alert("Failed to generate stream key: " + data.error);
+      }
+    } catch (err) {
+      console.error("Error fetching stream key:", err);
+      alert("Error generating stream key. Ensure Mux env variables are configured.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
 
   return (
     <div className="font-body-md text-body-md overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container bg-background min-h-screen text-on-background">
@@ -19,7 +38,7 @@ export default function DashboardPage() {
       <SideNavBar />
 
       {/* Main Content Area */}
-      <main className="pt-16 md:pl-[260px] min-h-screen relative z-10 p-6 md:p-section_margin max-w-container_max_width mx-auto">
+      <main className="mt-16 md:ml-[260px] min-h-screen relative z-10 p-6 md:p-section_margin max-w-container_max_width mx-auto">
         {/* Dashboard Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
@@ -155,48 +174,98 @@ export default function DashboardPage() {
                   <label className="block font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">
                     Primary Stream Key
                   </label>
-                  <div className="flex gap-2">
-                    <div className="relative flex-1">
-                      <input
-                        type={showKey ? "text" : "password"}
-                        defaultValue="live_123456789_aBcDeFgHiJkLmNoPqRsTuVwXyZ"
-                        readOnly
-                        className="w-full bg-surface-container-highest border border-white/10 rounded-lg pl-4 pr-10 py-2.5 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary transition-colors"
-                      />
+                  {!streamData ? (
+                    <button 
+                      type="button"
+                      onClick={generateStreamKey}
+                      disabled={isGenerating}
+                      className="w-full bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 font-label-md text-label-md py-3 rounded-lg transition-colors flex justify-center items-center gap-2"
+                    >
+                      {isGenerating ? (
+                        <span className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></span>
+                      ) : (
+                        <span className="material-symbols-outlined text-[20px]">add_circle</span>
+                      )}
+                      {isGenerating ? "Generating Stream..." : "Generate Stream Key"}
+                    </button>
+                  ) : (
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <input
+                          type={showKey ? "text" : "password"}
+                          value={streamData.streamKey}
+                          readOnly
+                          className="w-full bg-surface-container-highest border border-white/10 rounded-lg pl-4 pr-10 py-2.5 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary transition-colors"
+                        />
+                        <button 
+                          type="button"
+                          onClick={() => setShowKey(!showKey)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors"
+                        >
+                          <span className="material-symbols-outlined text-[20px]">
+                            {showKey ? "visibility_off" : "visibility"}
+                          </span>
+                        </button>
+                      </div>
                       <button 
-                        type="button"
-                        onClick={() => setShowKey(!showKey)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors"
+                        type="button" 
+                        onClick={() => navigator.clipboard.writeText(streamData.streamKey)}
+                        className="bg-surface-container-highest hover:bg-surface-bright border border-primary/50 text-primary font-label-md text-label-md px-4 py-2.5 rounded-lg transition-colors flex items-center gap-2 shrink-0"
                       >
-                        <span className="material-symbols-outlined text-[20px]">
-                          {showKey ? "visibility_off" : "visibility"}
-                        </span>
+                        <span className="material-symbols-outlined text-[18px]">content_copy</span>
+                        Copy
                       </button>
                     </div>
-                    <button type="button" className="bg-surface-container-highest hover:bg-surface-bright border border-primary/50 text-primary font-label-md text-label-md px-4 py-2.5 rounded-lg transition-colors flex items-center gap-2 shrink-0">
-                      <span className="material-symbols-outlined text-[18px]">content_copy</span>
-                      Copy
-                    </button>
-                  </div>
+                  )}
                 </div>
 
                 {/* URL Input */}
-                <div>
-                  <label className="block font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">
-                    Stream URL
-                  </label>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      defaultValue="rtmp://live.vortexstream.tv/app"
-                      readOnly
-                      className="w-full bg-surface-container-highest border border-white/10 rounded-lg px-4 py-2.5 font-body-md text-body-md text-on-surface-variant focus:outline-none focus:border-primary transition-colors"
-                    />
-                    <button type="button" className="bg-surface-container-highest hover:bg-surface-bright border border-white/10 text-on-surface font-label-md text-label-md px-4 py-2.5 rounded-lg transition-colors flex items-center shrink-0">
-                      <span className="material-symbols-outlined text-[18px]">content_copy</span>
-                    </button>
+                {streamData && (
+                  <div>
+                    <label className="block font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">
+                      Stream URL
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={streamData.rtmpUrl}
+                        readOnly
+                        className="w-full bg-surface-container-highest border border-white/10 rounded-lg px-4 py-2.5 font-body-md text-body-md text-on-surface-variant focus:outline-none focus:border-primary transition-colors"
+                      />
+                      <button 
+                        type="button" 
+                        onClick={() => navigator.clipboard.writeText(streamData.rtmpUrl)}
+                        className="bg-surface-container-highest hover:bg-surface-bright border border-white/10 text-on-surface font-label-md text-label-md px-4 py-2.5 rounded-lg transition-colors flex items-center shrink-0"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">content_copy</span>
+                      </button>
+                    </div>
                   </div>
-                </div>
+                )}
+
+                {/* Playback ID Input */}
+                {streamData && (
+                  <div>
+                    <label className="block font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-wider">
+                      Playback ID (For Live Page)
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={streamData.playbackId}
+                        readOnly
+                        className="w-full bg-surface-container-highest border border-white/10 rounded-lg px-4 py-2.5 font-body-md text-body-md text-secondary focus:outline-none transition-colors"
+                      />
+                      <button 
+                        type="button" 
+                        onClick={() => navigator.clipboard.writeText(streamData.playbackId)}
+                        className="bg-surface-container-highest hover:bg-surface-bright border border-white/10 text-on-surface font-label-md text-label-md px-4 py-2.5 rounded-lg transition-colors flex items-center shrink-0"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">content_copy</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

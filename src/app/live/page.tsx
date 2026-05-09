@@ -24,7 +24,7 @@ export default function StreamPage() {
             {/* Large Video Player */}
             <div className="w-full bg-black relative group aspect-video lg:aspect-auto lg:h-[665px] shrink-0 border-b border-white/5">
               <MuxPlayer
-                playbackId="uNbxnGLKJ00yfbijDO8COxTOyVKT01xpxW" // Public test VOD. Replace with your live playbackId from the API
+                playbackId="ilvMIX2rMLHdiINyVOwv5r4xCnCso900AWSpGvVgO9Wo" // Public test VOD. Replace with your live playbackId from the API
                 metadata={{
                   video_title: "Neon Velocity Championship: Finals",
                 }}

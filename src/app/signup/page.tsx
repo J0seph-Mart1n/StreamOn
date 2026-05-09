@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../../FirebaseConfig";
 
 export default function AuthPage() {
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -23,7 +24,10 @@ export default function AuthPage() {
       if (isLoginMode) {
         await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
       } else {
-        await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password);
+        const userCredential = await createUserWithEmailAndPassword(FIREBASE_AUTH, email, password);
+        if (username.trim()) {
+          await updateProfile(userCredential.user, { displayName: username });
+        }
       }
       // Assuming successful auth redirects to home
       router.push("/");
@@ -87,6 +91,35 @@ export default function AuthPage() {
           {/* Form */}
           <form onSubmit={handleAuth} className="flex flex-col gap-5">
             
+            {/* Username Field */}
+            {!isLoginMode && (
+              <div className="flex flex-col gap-2">
+                <label
+                  htmlFor="username"
+                  className="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider"
+                >
+                  Username
+                </label>
+                <div className="relative flex items-center">
+                  <span
+                    className="material-symbols-outlined absolute left-4 text-on-surface-variant"
+                    style={{ fontVariationSettings: "'FILL' 0" }}
+                  >
+                    person
+                  </span>
+                  <input
+                    id="username"
+                    type="text"
+                    placeholder="Username"
+                    required={!isLoginMode}
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="w-full pl-12 pr-4 py-3 bg-surface-container-lowest/80 border border-outline-variant/50 rounded-lg font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all placeholder:text-on-surface-variant/40"
+                  />
+                </div>
+              </div>
+            )}
+
             {/* Email Field */}
             <div className="flex flex-col gap-2">
               <label
@@ -105,7 +138,7 @@ export default function AuthPage() {
                 <input
                   id="email"
                   type="email"
-                  placeholder="runner@nexus.net"
+                  placeholder="Email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}

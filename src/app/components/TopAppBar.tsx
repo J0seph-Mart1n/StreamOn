@@ -3,17 +3,18 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { User, onAuthStateChanged, signOut } from "firebase/auth";
 import { FIREBASE_AUTH } from "../../../FirebaseConfig";
 
 export default function TopAppBar() {
   const router = useRouter();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const isLoggedIn = !!user;
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (user) => {
-      setIsLoggedIn(!!user);
+    const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (currentUser) => {
+      setUser(currentUser);
     });
     
     // Cleanup subscription on unmount
@@ -103,7 +104,7 @@ export default function TopAppBar() {
               {showProfileMenu && (
                 <div className="absolute right-0 top-full mt-3 w-48 bg-surface-container border border-white/10 rounded-xl shadow-2xl shadow-black/50 overflow-hidden flex flex-col py-2 z-50">
                   <div className="px-4 py-2 border-b border-white/5 mb-1">
-                    <p className="font-label-md text-on-surface">NexusUser</p>
+                    <p className="font-label-md text-on-surface truncate">{user?.displayName || user?.email?.split('@')[0] || "User"}</p>
                     <p className="font-label-sm text-on-surface-variant">Online</p>
                   </div>
                   <button 

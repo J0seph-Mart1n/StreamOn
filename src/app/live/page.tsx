@@ -3,7 +3,10 @@ import TopAppBar from "../components/TopAppBar";
 import SideNavBar from "../components/SideNavBar";
 import MuxPlayer from "@mux/mux-player-react";
 
-export default function StreamPage() {
+export default async function StreamPage({ searchParams }: { searchParams: Promise<{ playbackId?: string }> }) {
+  const params = await searchParams;
+  const playbackId = params.playbackId;
+
   return (
     // Wraps the entire page in a fixed h-screen container to prevent global scrolling
     <div className="bg-background text-on-background h-screen overflow-hidden flex flex-col selection:bg-primary-container selection:text-on-primary-container">
@@ -24,7 +27,7 @@ export default function StreamPage() {
             {/* Large Video Player */}
             <div className="w-full bg-black relative group aspect-video lg:aspect-auto lg:h-[665px] shrink-0 border-b border-white/5">
               <MuxPlayer
-                playbackId="ilvMIX2rMLHdiINyVOwv5r4xCnCso900AWSpGvVgO9Wo" // Public test VOD. Replace with your live playbackId from the API
+                playbackId={playbackId} // Public test VOD. Replace with your live playbackId from the API
                 metadata={{
                   video_title: "Neon Velocity Championship: Finals",
                 }}

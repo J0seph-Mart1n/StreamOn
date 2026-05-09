@@ -1,19 +1,42 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { FIREBASE_AUTH } from "../../../FirebaseConfig";
 import TopAppBar from "../components/TopAppBar";
 import SideNavBar from "../components/SideNavBar";
 
 export default function DashboardPage() {
+  const router = useRouter();
+  const [user, setUser] = useState<User | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [showKey, setShowKey] = useState(false);
   const [streamData, setStreamData] = useState<{ streamKey: string, rtmpUrl: string, playbackId: string } | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (currentUser) => {
+      if (!currentUser) {
+        router.push("/signup");
+      } else {
+        setUser(currentUser);
+        setAuthLoading(false);
+      }
+    });
+    return () => unsubscribe();
+  }, [router]);
+
   const generateStreamKey = async () => {
     setIsGenerating(true);
     try {
-      const res = await fetch("/api/stream", { method: "POST" });
+      const username = user?.displayName || user?.email?.split('@')[0] || "VortexStream User";
+      const res = await fetch("/api/stream", { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username })
+      });
       const data = await res.json();
       if (res.ok) {
         setStreamData(data);
@@ -27,6 +50,14 @@ export default function DashboardPage() {
       setIsGenerating(false);
     }
   };
+
+  if (authLoading) {
+    return (
+      <div className="bg-background min-h-screen flex items-center justify-center">
+        <span className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></span>
+      </div>
+    );
+  }
 
   return (
     <div className="font-body-md text-body-md overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container bg-background min-h-screen text-on-background">

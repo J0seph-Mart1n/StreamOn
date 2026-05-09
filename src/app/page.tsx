@@ -102,10 +102,10 @@ export default async function Home() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <h3 className="font-headline-md text-headline-md text-on-surface truncate group-hover:text-primary transition-colors drop-shadow-md">
-                            User Broadcast - {playbackId?.substring(0, 8)}
+                            {stream.passthrough || `Stream ${playbackId?.substring(0, 6)}`}
                           </h3>
                           <p className="font-body-md text-body-md text-on-surface-variant truncate">
-                            VortexStream
+                            VortexStream Network
                           </p>
                         </div>
                       </div>
@@ -130,15 +130,15 @@ export default async function Home() {
                         </div>
                       </div>
                       <div className="p-4 flex gap-3 items-start flex-1 bg-surface-container-lowest/50">
-                        <div className="w-10 h-10 rounded-full border-2 border-surface-container-lowest bg-surface-variant flex items-center justify-center text-on-surface-variant font-bold">
-                          U
+                        <div className="w-10 h-10 rounded-full border-2 border-surface-container-lowest bg-surface-variant flex items-center justify-center text-on-surface-variant font-bold uppercase">
+                          {stream.passthrough?.[0] || "U"}
                         </div>
                         <div className="flex-1 min-w-0">
                           <h3 className="font-label-md text-label-md text-on-surface leading-tight mb-1 group-hover:text-primary transition-colors line-clamp-2">
-                            Stream Session - {stream.id.substring(0, 6)}
+                            {stream.passthrough || "User Channel"}
                           </h3>
                           <p className="font-label-sm text-label-sm text-on-surface-variant truncate">
-                            User Channel
+                            Playing Custom Categories
                           </p>
                         </div>
                       </div>

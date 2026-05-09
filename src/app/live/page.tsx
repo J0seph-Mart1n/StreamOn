@@ -2,10 +2,31 @@ import Link from "next/link";
 import TopAppBar from "../components/TopAppBar";
 import SideNavBar from "../components/SideNavBar";
 import MuxPlayer from "@mux/mux-player-react";
+import Mux from "@mux/mux-node";
+
+const mux = new Mux();
 
 export default async function StreamPage({ searchParams }: { searchParams: Promise<{ playbackId?: string }> }) {
   const params = await searchParams;
   const playbackId = params.playbackId;
+
+  let broadcasterName = "Unknown Broadcaster";
+  let isLive = false;
+
+  if (playbackId) {
+    try {
+      const streamsPage = await mux.video.liveStreams.list();
+      const allStreams = streamsPage.data || streamsPage;
+      const currentStream = allStreams.find((s: any) => s.playback_ids?.[0]?.id === playbackId);
+      
+      if (currentStream) {
+        broadcasterName = currentStream.passthrough || "Anonymous Streamer";
+        isLive = currentStream.status === "active";
+      }
+    } catch (e) {
+      console.error("Failed to fetch stream details from Mux", e);
+    }
+  }
 
   return (
     // Wraps the entire page in a fixed h-screen container to prevent global scrolling
@@ -56,15 +77,13 @@ export default async function StreamPage({ searchParams }: { searchParams: Promi
               {/* Title & Category */}
               <div>
                 <h1 className="font-headline-lg text-headline-lg text-on-surface mb-2">
-                  Neon Velocity Championship: Finals Bracket 🏆 [DROPS ENABLED]
+                  {broadcasterName}&apos;s Live Broadcast
                 </h1>
                 <div className="flex items-center gap-2 flex-wrap">
                   <Link href="#" className="font-label-sm text-label-sm text-secondary hover:underline">
-                    Neon Velocity
+                    Just Chatting
                   </Link>
                   <span className="text-outline-variant">•</span>
-                  <span className="bg-surface-variant text-on-surface-variant font-label-sm text-label-sm px-2.5 py-1 rounded-full border border-white/5">Competitive</span>
-                  <span className="bg-surface-variant text-on-surface-variant font-label-sm text-label-sm px-2.5 py-1 rounded-full border border-white/5">E-Sports</span>
                   <span className="bg-surface-variant text-on-surface-variant font-label-sm text-label-sm px-2.5 py-1 rounded-full border border-white/5">English</span>
                 </div>
               </div>
@@ -74,22 +93,21 @@ export default async function StreamPage({ searchParams }: { searchParams: Promi
                 <div className="flex items-center gap-4">
                   <div className="relative">
                     <div className="w-14 h-14 rounded-full p-[2px] bg-gradient-to-tr from-primary to-secondary">
-                      <img
-                        alt="Broadcaster Avatar"
-                        className="w-full h-full rounded-full object-cover border-2 border-background"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbchsVC4QPosvdn8tHkp_00CFLABN_VTwFd7WNLsTHDFyf3-9o9F1LqGLTPqVM8ADod0qm9FPl8EMBN2SXr9fTDA8qno6tDR1k47AKINWe7SDP8bIuSsAK-YKsAFVIBZnWsCYmaKF0Fz2iKCV23CqlEwDTPjgCj5SCHJdhqoh4JGb2FC9bCWBh8a4J57PHcIdwwfGv2jIpEOh-WTOAmju0PpqMzRNYIHb5YY_Z4KzyF3dW2lmMKV1KXk7wvggwVTLcyVcfRQfESKs"
-                      />
+                      <div className="w-full h-full rounded-full border-2 border-background bg-surface-container flex items-center justify-center font-display-md text-xl font-bold uppercase text-on-surface">
+                        {broadcasterName[0] || "U"}
+                      </div>
                     </div>
-                    <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-tertiary-container text-on-tertiary-container font-label-sm text-[10px] px-1.5 rounded font-bold border-2 border-background uppercase tracking-wider">
-                      Live
-                    </div>
+                    {isLive && (
+                      <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-error text-on-error font-label-sm text-[10px] px-1.5 rounded font-bold border-2 border-background uppercase tracking-wider">
+                        Live
+                      </div>
+                    )}
                   </div>
                   <div>
                     <h2 className="font-headline-md text-[20px] leading-tight text-on-surface flex items-center gap-1">
-                      NexusLeague
-                      <span className="material-symbols-outlined icon-fill text-secondary text-[18px]" title="Verified Partner">verified</span>
+                      {broadcasterName}
                     </h2>
-                    <p className="font-body-md text-sm text-outline">1.2M Followers</p>
+                    <p className="font-body-md text-sm text-outline">New Streamer</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 w-full sm:w-auto">

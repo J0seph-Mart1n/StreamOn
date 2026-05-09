@@ -15,6 +15,9 @@ export default function DashboardPage() {
   const [showKey, setShowKey] = useState(false);
   const [streamData, setStreamData] = useState<{ streamKey: string, rtmpUrl: string, playbackId: string } | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (currentUser) => {
@@ -35,7 +38,7 @@ export default function DashboardPage() {
       const res = await fetch("/api/stream", { 
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username })
+        body: JSON.stringify({ username, title, description })
       });
       const data = await res.json();
       if (res.ok) {
@@ -99,7 +102,7 @@ export default function DashboardPage() {
               <h2 className="font-headline-md text-headline-md text-on-surface">Stream Information</h2>
             </div>
             
-            <form className="space-y-6 relative z-10">
+            <form className="space-y-6 relative z-10" onSubmit={(e) => { e.preventDefault(); generateStreamKey(); }}>
               {/* Stream Title */}
               <div>
                 <label className="block font-label-md text-label-md text-on-surface-variant mb-2" htmlFor="stream-title">
@@ -108,77 +111,43 @@ export default function DashboardPage() {
                 <input
                   id="stream-title"
                   type="text"
-                  defaultValue="Late Night Coding & Cyberpunk Vibes 🚀 | Building UI"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  maxLength={60}
+                  placeholder="Enter stream title (max 60 chars)"
                   className="w-full bg-surface-container-highest border border-white/10 rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
                 />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Category */}
-                <div>
-                  <label className="block font-label-md text-label-md text-on-surface-variant mb-2" htmlFor="category">
-                    Category
-                  </label>
-                  <div className="relative">
-                    <select
-                      id="category"
-                      defaultValue="Software & Game Development"
-                      className="w-full appearance-none bg-surface-container-highest border border-white/10 rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors cursor-pointer"
-                    >
-                      <option>Software & Game Development</option>
-                      <option>Just Chatting</option>
-                      <option>Creative Arts</option>
-                      <option>E-Sports</option>
-                    </select>
-                    <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none">
-                      expand_more
-                    </span>
-                  </div>
-                </div>
-
-                {/* Tags (Placeholder) */}
-                <div>
-                  <label className="block font-label-md text-label-md text-on-surface-variant mb-2">
-                    Tags
-                  </label>
-                  <div className="flex flex-wrap gap-2 pt-1">
-                    <span className="bg-surface-container-highest border border-white/10 text-on-surface font-label-sm text-label-sm px-3 py-1.5 rounded-full flex items-center gap-1">
-                      Programming
-                      <button type="button">
-                        <span className="material-symbols-outlined text-[14px] hover:text-error transition-colors">close</span>
-                      </button>
-                    </span>
-                    <span className="bg-surface-container-highest border border-white/10 text-on-surface font-label-sm text-label-sm px-3 py-1.5 rounded-full flex items-center gap-1">
-                      Design
-                      <button type="button">
-                        <span className="material-symbols-outlined text-[14px] hover:text-error transition-colors">close</span>
-                      </button>
-                    </span>
-                    <button type="button" className="bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 font-label-sm text-label-sm px-3 py-1.5 rounded-full flex items-center gap-1 transition-colors">
-                      <span className="material-symbols-outlined text-[14px]">add</span> Add Tag
-                    </button>
-                  </div>
-                </div>
               </div>
 
               {/* Update Notification */}
               <div>
                 <label className="block font-label-md text-label-md text-on-surface-variant mb-2" htmlFor="go-live-notif">
-                  Go Live Notification
+                  Stream Description
                 </label>
                 <textarea
                   id="go-live-notif"
                   rows={2}
-                  defaultValue="Come hang out! We're building a sick new UI design system tonight."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  maxLength={120}
+                  placeholder="Enter a short description (max 120 chars)"
                   className="w-full bg-surface-container-highest border border-white/10 rounded-lg px-4 py-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors resize-none"
                 />
               </div>
 
               {/* Actions */}
               <div className="flex justify-end border-t border-white/5 pt-6">
-                <button type="button" className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-surface-container-lowest font-label-md text-label-md px-6 py-3 rounded-lg shadow-lg shadow-primary/20 transition-all active:scale-95 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[20px]">save</span>
-                  Update Details
+                <button 
+                  type="submit" 
+                  disabled={isGenerating || !title.trim()} 
+                  className="bg-gradient-to-r from-primary to-secondary hover:opacity-90 text-surface-container-lowest font-label-md text-label-md px-6 py-3 rounded-lg shadow-lg shadow-primary/20 transition-all active:scale-95 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isGenerating ? (
+                    <span className="w-5 h-5 border-2 border-surface-container-lowest border-t-transparent rounded-full animate-spin"></span>
+                  ) : (
+                    <span className="material-symbols-outlined text-[20px]">add_circle</span>
+                  )}
+                  {isGenerating ? "Generating..." : "Generate Stream Key"}
                 </button>
               </div>
             </form>
@@ -206,19 +175,9 @@ export default function DashboardPage() {
                     Primary Stream Key
                   </label>
                   {!streamData ? (
-                    <button 
-                      type="button"
-                      onClick={generateStreamKey}
-                      disabled={isGenerating}
-                      className="w-full bg-primary/10 hover:bg-primary/20 text-primary border border-primary/30 font-label-md text-label-md py-3 rounded-lg transition-colors flex justify-center items-center gap-2"
-                    >
-                      {isGenerating ? (
-                        <span className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></span>
-                      ) : (
-                        <span className="material-symbols-outlined text-[20px]">add_circle</span>
-                      )}
-                      {isGenerating ? "Generating Stream..." : "Generate Stream Key"}
-                    </button>
+                    <div className="w-full bg-surface-container-highest/50 border border-white/5 border-dashed rounded-lg py-4 flex items-center justify-center text-on-surface-variant font-label-md">
+                      Fill out the form to generate your stream key
+                    </div>
                   ) : (
                     <div className="flex gap-2">
                       <div className="relative flex-1">
@@ -297,24 +256,6 @@ export default function DashboardPage() {
                     </div>
                   </div>
                 )}
-              </div>
-            </div>
-
-            {/* Quick Stats Placeholder */}
-            <div className="bg-gradient-to-br from-surface-container-high to-surface-container border border-white/5 rounded-xl p-6 flex-1 flex flex-col justify-between">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Session Overview</h3>
-                <span className="material-symbols-outlined text-on-surface-variant">monitoring</span>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-surface-container-highest/50 rounded-lg p-4 border border-white/5">
-                  <span className="block font-label-sm text-label-sm text-on-surface-variant mb-1">Followers Gained</span>
-                  <span className="font-headline-lg text-headline-lg text-on-surface">+24</span>
-                </div>
-                <div className="bg-surface-container-highest/50 rounded-lg p-4 border border-white/5">
-                  <span className="block font-label-sm text-label-sm text-on-surface-variant mb-1">Last Stream Peak</span>
-                  <span className="font-headline-lg text-headline-lg text-secondary">1.2k</span>
-                </div>
               </div>
             </div>
 

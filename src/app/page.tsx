@@ -72,6 +72,15 @@ export default async function Home() {
                   ? `https://image.mux.com/${playbackId}/thumbnail.jpg?width=${isFeatured ? 1280 : 640}&height=${isFeatured ? 720 : 360}&fit_mode=smartcrop&time=1`
                   : "https://lh3.googleusercontent.com/aida-public/AB6AXuBK5Q8PHoha2zFGgrSQoGwH2KzpvzZssxn7Wy75_t6it8etk9tPd3RUgdjXqhBv2NZCoGB4SVrxzw4iwZ8GWkP31yKuhToh6TE-o5dVDAtsb910EGAZCultG0qkTyUewaErKLMlh2PAAc2WkMSZKlyoEho6o7BV4nQCJnd0ehzZVEk9cqnNFfzB6SV5Gj1NfHLYZ-mkCs3golcM_zKWx9q33EdSJfVFKOioBoTttnFLAp0BoZvcF-EGo714bKqcqdkLumFqB2P71Hs";
 
+                let passthroughData: any = {};
+                try {
+                  passthroughData = JSON.parse(stream.passthrough || "{}");
+                } catch (e) {
+                  passthroughData = { u: stream.passthrough };
+                }
+                const broadcasterName = passthroughData.u || "User Channel";
+                const streamTitle = passthroughData.t || `Stream ${playbackId?.substring(0, 6)}`;
+
                 if (isFeatured) {
                   return (
                     <Link key={stream.id} href={`/live?playbackId=${playbackId}`} className="md:col-span-2 xl:col-span-2 group relative rounded-xl overflow-hidden bg-surface-container border border-white/10 hover:border-primary/50 transition-all duration-300 shadow-lg hover:shadow-primary/10 block cursor-pointer">
@@ -97,15 +106,15 @@ export default async function Home() {
                         </div>
                       </div>
                       <div className="p-4 absolute bottom-0 left-0 right-0 z-10 flex gap-4 items-start">
-                        <div className="w-12 h-12 rounded-full border-2 border-surface-container-lowest bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold text-lg">
-                          V
+                        <div className="w-12 h-12 rounded-full border-2 border-surface-container-lowest bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold text-lg uppercase">
+                          {broadcasterName[0] || "U"}
                         </div>
                         <div className="flex-1 min-w-0">
                           <h3 className="font-headline-md text-headline-md text-on-surface truncate group-hover:text-primary transition-colors drop-shadow-md">
-                            {stream.passthrough || `Stream ${playbackId?.substring(0, 6)}`}
+                            {streamTitle}
                           </h3>
                           <p className="font-body-md text-body-md text-on-surface-variant truncate">
-                            VortexStream Network
+                            {broadcasterName}
                           </p>
                         </div>
                       </div>
@@ -131,14 +140,14 @@ export default async function Home() {
                       </div>
                       <div className="p-4 flex gap-3 items-start flex-1 bg-surface-container-lowest/50">
                         <div className="w-10 h-10 rounded-full border-2 border-surface-container-lowest bg-surface-variant flex items-center justify-center text-on-surface-variant font-bold uppercase">
-                          {stream.passthrough?.[0] || "U"}
+                          {broadcasterName[0] || "U"}
                         </div>
                         <div className="flex-1 min-w-0">
                           <h3 className="font-label-md text-label-md text-on-surface leading-tight mb-1 group-hover:text-primary transition-colors line-clamp-2">
-                            {stream.passthrough || "User Channel"}
+                            {streamTitle}
                           </h3>
                           <p className="font-label-sm text-label-sm text-on-surface-variant truncate">
-                            Playing Custom Categories
+                            {broadcasterName}
                           </p>
                         </div>
                       </div>

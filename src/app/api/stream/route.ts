@@ -6,9 +6,13 @@ const mux = new Mux();
 
 export async function POST(req: Request) {
   try {
-    // Parse the incoming body to get the username
+    // Parse the incoming body to get the metadata
     const body = await req.json().catch(() => ({}));
     const username = body.username || "Anonymous Streamer";
+    const title = body.title || `${username}'s Stream`;
+    const description = body.description || "";
+
+    const passthroughData = JSON.stringify({ u: username, t: title, d: description });
 
     // Create a new Live Stream
     const liveStream = await mux.video.liveStreams.create({
@@ -16,7 +20,7 @@ export async function POST(req: Request) {
       new_asset_settings: { playback_policy: ['public'] },
       // Optional: Set latency_mode to 'reduced' or 'low' for Twitch-like chat interaction
       latency_mode: 'low', 
-      passthrough: username, // Attach the user's identity to the stream!
+      passthrough: passthroughData, // Attach the user's identity and stream metadata to the stream!
     });
 
     return NextResponse.json({

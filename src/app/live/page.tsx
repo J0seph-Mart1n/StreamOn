@@ -11,6 +11,8 @@ export default async function StreamPage({ searchParams }: { searchParams: Promi
   const playbackId = params.playbackId;
 
   let broadcasterName = "Unknown Broadcaster";
+  let streamTitle = "Live Broadcast";
+  let streamDescription = "Welcome to the broadcast! Make sure your account is linked to earn exclusive drop rewards during this stream.";
   let isLive = false;
 
   if (playbackId) {
@@ -20,7 +22,16 @@ export default async function StreamPage({ searchParams }: { searchParams: Promi
       const currentStream = allStreams.find((s: any) => s.playback_ids?.[0]?.id === playbackId);
       
       if (currentStream) {
-        broadcasterName = currentStream.passthrough || "Anonymous Streamer";
+        let passthroughData: any = {};
+        try {
+          passthroughData = JSON.parse(currentStream.passthrough || "{}");
+        } catch (e) {
+          passthroughData = { u: currentStream.passthrough };
+        }
+        
+        broadcasterName = passthroughData.u || "Anonymous Streamer";
+        streamTitle = passthroughData.t || `${broadcasterName}'s Live Broadcast`;
+        streamDescription = passthroughData.d || streamDescription;
         isLive = currentStream.status === "active";
       }
     } catch (e) {
@@ -50,7 +61,7 @@ export default async function StreamPage({ searchParams }: { searchParams: Promi
               <MuxPlayer
                 playbackId={playbackId} // Public test VOD. Replace with your live playbackId from the API
                 metadata={{
-                  video_title: "Neon Velocity Championship: Finals",
+                  video_title: streamTitle,
                 }}
                 autoPlay
                 muted
@@ -77,7 +88,7 @@ export default async function StreamPage({ searchParams }: { searchParams: Promi
               {/* Title & Category */}
               <div>
                 <h1 className="font-headline-lg text-headline-lg text-on-surface mb-2">
-                  {broadcasterName}&apos;s Live Broadcast
+                  {streamTitle}
                 </h1>
                 <div className="flex items-center gap-2 flex-wrap">
                   <Link href="#" className="font-label-sm text-label-sm text-secondary hover:underline">
@@ -124,7 +135,7 @@ export default async function StreamPage({ searchParams }: { searchParams: Promi
 
               {/* Stream Description */}
               <div className="bg-surface-container-lowest rounded-xl p-4 border border-white/5 font-body-md text-sm text-on-surface-variant leading-relaxed mb-8">
-                <p>Welcome to the grand finals of the Neon Velocity Championship! Top 8 racers from around the globe are competing for a $500,000 prize pool. Make sure your account is linked to earn exclusive drop rewards during this broadcast.</p>
+                <p>{streamDescription}</p>
               </div>
             </div>
           </section>

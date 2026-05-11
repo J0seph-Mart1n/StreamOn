@@ -1,6 +1,7 @@
 import Link from "next/link";
 import TopAppBar from "../components/TopAppBar";
 import SideNavBar from "../components/SideNavBar";
+import LiveChat from "../components/LiveChat";
 import MuxPlayer from "@mux/mux-player-react";
 import Mux from "@mux/mux-node";
 
@@ -141,140 +142,7 @@ export default async function StreamPage({ searchParams }: { searchParams: Promi
           </section>
 
           {/* Live Chat Sidebar */}
-          <aside className="w-full lg:w-[340px] xl:w-[400px] h-[512px] lg:h-full bg-surface-container border-l border-white/10 flex flex-col shrink-0 relative z-30">
-            {/* Chat Header */}
-            <div className="h-14 flex items-center justify-between px-4 border-b border-white/5 bg-surface-container-highest/50 backdrop-blur-sm">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-outline">chat</span>
-                <h3 className="font-label-md text-label-md text-on-surface uppercase tracking-widest">Live Chat</h3>
-              </div>
-              <button className="text-outline hover:text-on-surface transition-colors">
-                <span className="material-symbols-outlined text-[20px]">people</span>
-              </button>
-            </div>
-
-            {/* Chat Messages Feed */}
-            <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3 text-[14px] font-body-md leading-relaxed">
-              
-              {/* Pinned Message */}
-              <div className="bg-surface-variant/50 border border-primary/30 rounded p-2 mb-2">
-                <div className="flex items-center gap-1 text-primary font-label-sm text-[11px] uppercase tracking-wider mb-1">
-                  <span className="material-symbols-outlined text-[14px] icon-fill">push_pin</span>
-                  Pinned by Moderators
-                </div>
-                <p className="text-on-surface-variant">Welcome to the finals! Keep chat respectful. Drops are currently active. Use !bracket to see the standings.</p>
-              </div>
-
-              {/* Message 1 */}
-              <div className="group flex flex-col hover:bg-white/5 -mx-2 px-2 py-1 rounded transition-colors relative">
-                <div className="flex items-start gap-2">
-                  <div className="flex items-center gap-1 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-surface-container absolute right-2 shadow-md rounded">
-                    <button className="p-1 text-outline hover:text-error transition-colors" title="Delete Message"><span className="material-symbols-outlined text-[16px]">delete</span></button>
-                    <button className="p-1 text-outline hover:text-error transition-colors" title="Block User"><span className="material-symbols-outlined text-[16px]">block</span></button>
-                  </div>
-                  <span className="bg-secondary/20 text-secondary text-[10px] px-1 rounded border border-secondary/30 mt-1">SUB</span>
-                  <div className="break-words w-full pr-12">
-                    <span className="font-bold text-secondary cursor-pointer hover:underline">CyberNinja99</span>
-                    <span className="text-on-surface-variant ml-1">That corner drift was insane! 🏎️💨</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Message 2 (Mod) */}
-              <div className="group flex flex-col hover:bg-white/5 -mx-2 px-2 py-1 rounded transition-colors relative">
-                <div className="flex items-start gap-2">
-                  <div className="flex items-center gap-1 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-surface-container absolute right-2 shadow-md rounded">
-                    <button className="p-1 text-outline hover:text-error transition-colors" title="Delete Message"><span className="material-symbols-outlined text-[16px]">delete</span></button>
-                    <button className="p-1 text-outline hover:text-error transition-colors" title="Block User"><span className="material-symbols-outlined text-[16px]">block</span></button>
-                  </div>
-                  <span className="material-symbols-outlined icon-fill text-green-400 text-[16px] mt-0.5" title="Moderator">shield</span>
-                  <div className="break-words w-full pr-12">
-                    <span className="font-bold text-green-400 cursor-pointer hover:underline">NexusBot</span>
-                    <span className="text-on-surface-variant ml-1">The current bracket is available here: link.nexus/bracket</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Message 3 */}
-              <div className="group flex flex-col hover:bg-white/5 -mx-2 px-2 py-1 rounded transition-colors relative">
-                <div className="flex items-start gap-2">
-                  <div className="flex items-center gap-1 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-surface-container absolute right-2 shadow-md rounded">
-                    <button className="p-1 text-outline hover:text-error transition-colors" title="Delete Message"><span className="material-symbols-outlined text-[16px]">delete</span></button>
-                    <button className="p-1 text-outline hover:text-error transition-colors" title="Block User"><span className="material-symbols-outlined text-[16px]">block</span></button>
-                  </div>
-                  <div className="break-words w-full pr-12">
-                    <span className="font-bold text-purple-400 cursor-pointer hover:underline">NeonDreams</span>
-                    <span className="text-on-surface-variant ml-1">Let's goooo! Hype in the chat! 🔥🔥🔥</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Message 4 */}
-              <div className="group flex flex-col hover:bg-white/5 -mx-2 px-2 py-1 rounded transition-colors relative">
-                <div className="flex items-start gap-2">
-                  <div className="flex items-center gap-1 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-surface-container absolute right-2 shadow-md rounded">
-                    <button className="p-1 text-outline hover:text-error transition-colors" title="Delete Message"><span className="material-symbols-outlined text-[16px]">delete</span></button>
-                    <button className="p-1 text-outline hover:text-error transition-colors" title="Block User"><span className="material-symbols-outlined text-[16px]">block</span></button>
-                  </div>
-                  <div className="break-words w-full pr-12">
-                    <span className="font-bold text-blue-400 cursor-pointer hover:underline">GlitchMaster</span>
-                    <span className="text-on-surface-variant ml-1">I don't think he can catch up after that penalty.</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Message 5 */}
-              <div className="group flex flex-col hover:bg-white/5 -mx-2 px-2 py-1 rounded transition-colors relative">
-                <div className="flex items-start gap-2">
-                  <div className="flex items-center gap-1 mt-0.5 opacity-0 group-hover:opacity-100 transition-opacity bg-surface-container absolute right-2 shadow-md rounded">
-                    <button className="p-1 text-outline hover:text-error transition-colors" title="Delete Message"><span className="material-symbols-outlined text-[16px]">delete</span></button>
-                    <button className="p-1 text-outline hover:text-error transition-colors" title="Block User"><span className="material-symbols-outlined text-[16px]">block</span></button>
-                  </div>
-                  <span className="bg-secondary/20 text-secondary text-[10px] px-1 rounded border border-secondary/30 mt-1">SUB</span>
-                  <div className="break-words w-full pr-12">
-                    <span className="font-bold text-secondary cursor-pointer hover:underline">CyberNinja99</span>
-                    <span className="text-on-surface-variant ml-1">Wait, did they just announce a new map?</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* New Messages Indicator (Hidden by default, shown logically) */}
-              <div className="sticky bottom-0 w-full flex justify-center pb-2 pointer-events-none opacity-0">
-                <button className="bg-surface-variant text-on-surface text-xs px-3 py-1 rounded-full shadow-lg pointer-events-auto hover:bg-surface-container-highest">
-                  More messages below
-                </button>
-              </div>
-            </div>
-
-            {/* Chat Input Area */}
-            <div className="p-4 border-t border-white/5 bg-surface-container-highest">
-              <div className="relative flex items-center">
-                <input
-                  className="w-full bg-surface-container text-on-surface font-body-md text-sm rounded-lg border border-outline/20 focus:border-primary focus:ring-1 focus:ring-primary pl-3 pr-24 py-2.5 transition-colors placeholder:text-outline-variant outline-none"
-                  placeholder="Send a message..."
-                  type="text"
-                />
-                <div className="absolute right-2 flex items-center gap-1">
-                  <button className="p-1.5 text-outline hover:text-primary transition-colors rounded" title="Emotes">
-                    <span className="material-symbols-outlined text-[20px]">sentiment_satisfied</span>
-                  </button>
-                  <button className="bg-primary hover:bg-primary-fixed-dim text-on-primary p-1.5 rounded-md transition-colors shadow-md flex items-center justify-center">
-                    <span className="material-symbols-outlined text-[18px]">send</span>
-                  </button>
-                </div>
-              </div>
-              <div className="flex justify-between items-center mt-2 px-1">
-                <div className="flex items-center gap-1 text-[11px] text-outline-variant">
-                  <span className="w-2 h-2 rounded-full bg-secondary"></span>
-                  Follower Only Chat
-                </div>
-                <span className="text-[11px] text-outline-variant flex items-center gap-1">
-                  <span className="material-symbols-outlined text-[14px]">local_police</span>
-                  Mod View Active
-                </span>
-              </div>
-            </div>
-          </aside>
+          <LiveChat playbackId={playbackId} />
         </main>
       </div>
     </div>

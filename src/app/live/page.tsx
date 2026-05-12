@@ -2,6 +2,7 @@ import Link from "next/link";
 import TopAppBar from "../components/TopAppBar";
 import SideNavBar from "../components/SideNavBar";
 import LiveChat from "../components/LiveChat";
+import LiveViewerCount from "../components/LiveViewerCount";
 import MuxPlayer from "@mux/mux-player-react";
 import Mux from "@mux/mux-node";
 
@@ -77,10 +78,7 @@ export default async function StreamPage({ searchParams }: { searchParams: Promi
                   <span className="w-2 h-2 rounded-full bg-on-tertiary-container animate-pulse"></span>
                   Live
                 </div>
-                <div className="bg-surface-container/80 backdrop-blur-md text-on-surface font-label-sm text-label-sm px-2 py-1 rounded shadow-lg flex items-center gap-1 border border-white/10">
-                  <span className="material-symbols-outlined text-[16px]">visibility</span>
-                  14,205
-                </div>
+                {playbackId && <LiveViewerCount streamId={playbackId} />}
               </div>
             </div>
 

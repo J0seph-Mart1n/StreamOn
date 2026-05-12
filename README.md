@@ -1,4 +1,4 @@
-# StreamOn (VortexStream)
+# StreamOn
 
 A real-time live streaming platform built with Next.js, Firebase, Mux, and Socket.io.
 
